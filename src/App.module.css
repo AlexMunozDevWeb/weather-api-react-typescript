@@ -1,0 +1,126 @@
+.main {
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 96px 16px 120px;
+  min-height: 100vh;
+  box-sizing: border-box;
+}
+
+.centerMsg {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  max-width: 480px;
+  margin: 80px auto;
+  padding: 0 16px;
+}
+
+.retryBtn {
+  padding: 10px 20px;
+  background-color: var(--surface-container-high);
+  border: 1px solid var(--border-color);
+  color: var(--on-surface);
+  font-family: "JetBrains Mono", monospace;
+  font-size: 1.2rem;
+  font-weight: 600;
+  border-radius: var(--rounded-element);
+  transition: all 0.2s ease;
+}
+
+.retryBtn:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+/* Floating Action Button (Geolocation) */
+.fabContainer {
+  position: fixed;
+  bottom: 88px;
+  right: 16px;
+  z-index: 90;
+  transition: bottom 0.3s ease, right 0.3s ease;
+}
+
+.fab {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  background-color: var(--primary);
+  color: #fff;
+  border: none;
+  border-radius: var(--rounded-element);
+  box-shadow: 0 4px 20px var(--primary-glow-active);
+  transition: all 0.2s ease;
+}
+
+.fab:hover {
+  filter: brightness(1.15);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 24px var(--primary);
+}
+
+.fab:active {
+  transform: translateY(1px);
+}
+
+/* Mobile Bottom Navigation Bar */
+.bottomNav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 72px;
+  background-color: rgba(26, 28, 28, 0.95);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-top: 1px solid rgba(68, 71, 72, 0.3);
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  z-index: 90;
+  padding-bottom: env(safe-area-inset-bottom);
+  transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+:global(.theme-elite) .bottomNav {
+  background-color: rgba(24, 26, 44, 0.95);
+  border-top: 1px solid rgba(63, 72, 82, 0.3);
+}
+
+.bottomNavBtn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  color: var(--on-surface-variant);
+  text-decoration: none;
+  font-size: 1rem;
+  background: none;
+  border: none;
+  padding: 8px;
+  transition: all 0.2s ease;
+}
+
+.bottomNavBtn:hover {
+  color: var(--primary);
+}
+
+/* Responsive Rules Override */
+@media (min-width: 768px) {
+  .main {
+    padding: 104px 32px 48px;
+  }
+
+  .bottomNav {
+    display: none;
+  }
+
+  .fabContainer {
+    bottom: 32px;
+    right: 32px;
+  }
+}

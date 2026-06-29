@@ -1,0 +1,155 @@
+.header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 64px;
+  z-index: 100;
+  background-color: rgba(30, 32, 32, 0.8);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(68, 71, 72, 0.3);
+  transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+/* Enable dynamic header background for theme-elite */
+:global(.theme-elite) .header {
+  background-color: rgba(28, 30, 48, 0.8);
+  border-bottom: 1px solid rgba(63, 72, 82, 0.3);
+}
+
+.container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 100%;
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 0 16px;
+}
+
+.left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.iconButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
+  color: var(--on-surface);
+  border-radius: var(--rounded-element);
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.iconButton:hover {
+  background-color: rgba(255, 255, 255, 0.08);
+  color: var(--primary);
+}
+
+.title {
+  font-size: 2rem;
+  letter-spacing: -0.05em;
+  color: var(--on-surface);
+  margin: 0;
+}
+
+.nav {
+  display: none;
+  gap: 32px;
+  align-items: center;
+}
+
+.navLink {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 1.2rem;
+  font-weight: 500;
+  text-decoration: none;
+  color: var(--on-surface-variant);
+  letter-spacing: 0.1em;
+  padding-bottom: 4px;
+  border-bottom: 2px solid transparent;
+  transition: color 0.2s ease, border-color 0.2s ease;
+}
+
+.navLink:hover {
+  color: var(--on-surface);
+}
+
+.activeLink {
+  color: var(--primary);
+  border-bottom-color: var(--primary);
+}
+
+.right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Theme Switcher Button Style */
+.themeButton {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  background-color: var(--surface-container-low);
+  border: 1px solid var(--border-color);
+  border-radius: var(--rounded-element);
+  font-family: "JetBrains Mono", monospace;
+  font-size: 1.1rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  transition: all 0.2s ease;
+}
+
+.crimsonActive {
+  color: #e11d48;
+  border-color: rgba(225, 29, 72, 0.4);
+  box-shadow: 0 0 8px rgba(225, 29, 72, 0.15);
+}
+
+.crimsonActive:hover {
+  background-color: rgba(225, 29, 72, 0.1);
+  box-shadow: 0 0 12px rgba(225, 29, 72, 0.3);
+}
+
+.eliteActive {
+  color: #00a3ff;
+  border-color: rgba(0, 163, 255, 0.4);
+  box-shadow: 0 0 8px rgba(0, 163, 255, 0.15);
+}
+
+.eliteActive:hover {
+  background-color: rgba(0, 163, 255, 0.1);
+  box-shadow: 0 0 12px rgba(0, 163, 255, 0.3);
+}
+
+.themeIcon {
+  flex-shrink: 0;
+}
+
+.themeText {
+  display: none;
+}
+
+/* Responsive Overrides */
+@media (min-width: 768px) {
+  .container {
+    padding: 0 32px;
+  }
+  
+  .title {
+    font-size: 2.4rem;
+  }
+  
+  .nav {
+    display: flex;
+  }
+  
+  .themeText {
+    display: inline;
+  }
+}

@@ -1,0 +1,420 @@
+.bentoGrid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 20px;
+  width: 100%;
+}
+
+.card {
+  background-color: var(--surface);
+  border: 1px solid var(--border-color);
+  padding: 24px;
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--rounded-card);
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+}
+
+.card:hover {
+  border-color: rgba(255, 255, 255, 0.1);
+  box-shadow: 0 6px 30px rgba(0, 0, 0, 0.25);
+}
+
+/* Card Column Spans */
+.heroCard {
+  grid-column: span 12;
+  height: 360px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.metricsCard {
+  grid-column: span 12;
+  height: 360px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.hourlyCard {
+  grid-column: span 12;
+}
+
+.radarCard {
+  grid-column: span 12;
+  height: 320px;
+  padding: 0;
+}
+
+.outlookCard {
+  grid-column: span 12;
+  height: 320px;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Hero Widget Styles */
+.topAccent {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background-color: var(--primary);
+  box-shadow: 0 0 12px var(--primary);
+  transition: background-color 0.3s ease;
+}
+
+.heroHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  z-index: 10;
+}
+
+.heroDescription {
+  font-size: 3.6rem;
+  line-height: 1.1;
+  text-transform: uppercase;
+  margin-top: 8px;
+  color: var(--on-surface);
+}
+
+.heroIcon {
+  color: var(--primary);
+  filter: drop-shadow(0 0 8px var(--primary-glow));
+  transition: color 0.3s ease;
+}
+
+.heroFooter {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  z-index: 10;
+}
+
+.tempGroup {
+  display: flex;
+  align-items: baseline;
+}
+
+.tempVal {
+  font-size: 8.4rem;
+  font-weight: 700;
+  letter-spacing: -0.04em;
+  line-height: 0.95;
+}
+
+.tempUnit {
+  font-size: 2.8rem;
+  font-weight: 600;
+  color: var(--primary);
+  margin-left: 4px;
+}
+
+.feelsGroup {
+  text-align: right;
+}
+
+.feelsVal {
+  font-size: 2.4rem;
+  color: var(--on-surface);
+  margin-top: 4px;
+}
+
+/* Metrics Bento Widget Styles */
+.metricsList {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.metricItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 12px;
+  margin-bottom: 12px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.metricVal {
+  font-size: 1.8rem;
+  color: var(--on-surface);
+  margin-top: 4px;
+}
+
+.metricIcon {
+  color: var(--on-surface-variant);
+}
+
+.aqiPulse {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  position: relative;
+}
+
+.aqiPulse::after {
+  content: "";
+  position: absolute;
+  top: -4px;
+  left: -4px;
+  right: -4px;
+  bottom: -4px;
+  border-radius: 50%;
+  border: 1px solid currentColor;
+  opacity: 0.8;
+  animation: pulseRadar 1.5s infinite ease-out;
+}
+
+.aqiExcellent { color: #10b981; background-color: #10b981; }
+.aqiGood { color: #34d399; background-color: #34d399; }
+.aqiModerate { color: #fbbf24; background-color: #fbbf24; }
+.aqiPoor { color: #f97316; background-color: #f97316; }
+.aqiVeryPoor { color: #ef4444; background-color: #ef4444; }
+
+.metricsFooter {
+  margin-top: 12px;
+}
+
+.analyticsBtn {
+  width: 100%;
+  padding: 12px;
+  background-color: var(--primary);
+  color: #fff;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 1.2rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-align: center;
+  border-radius: var(--rounded-element);
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 12px var(--primary-glow);
+}
+
+.analyticsBtn:hover {
+  filter: brightness(1.1);
+  box-shadow: 0 6px 16px var(--primary-glow-active);
+}
+
+/* Hourly Precision Widget Styles */
+.hourlyHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.hourlyIndicators {
+  display: flex;
+  gap: 6px;
+}
+
+.indicatorActive {
+  width: 12px;
+  height: 6px;
+  background-color: var(--primary);
+  border-radius: 3px;
+  transition: background-color 0.3s ease;
+}
+
+.indicatorInactive {
+  width: 6px;
+  height: 6px;
+  background-color: var(--border-color);
+  border-radius: 50%;
+}
+
+.hourlyTimeline {
+  display: flex;
+  gap: 16px;
+  overflow-x: auto;
+  padding-bottom: 8px;
+  scroll-behavior: smooth;
+  scrollbar-width: thin;
+}
+
+.timelineItem {
+  min-width: 90px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 8px;
+  border-right: 1px solid var(--border-color);
+}
+
+.timelineItem:last-child {
+  border-right: none;
+}
+
+.timelineIcon {
+  color: var(--on-surface-variant);
+  transition: color 0.3s ease;
+}
+
+.timelineItem:hover .timelineIcon {
+  color: var(--primary);
+  transform: translateY(-2px);
+}
+
+.timelineTemp {
+  font-size: 1.8rem;
+  color: var(--on-surface);
+}
+
+/* Radar precipitation Widget Styles */
+.radarCard {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.radarOverlay {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  z-index: 10;
+  background-color: rgba(13, 14, 15, 0.6);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  padding: 4px 8px;
+  border: 1px solid var(--border-color);
+  border-radius: var(--rounded-element);
+}
+
+.canvasContainer {
+  width: 100%;
+  height: 100%;
+  flex-grow: 1;
+}
+
+.radarCanvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.radarControls {
+  position: absolute;
+  bottom: 16px;
+  right: 16px;
+  display: flex;
+  gap: 8px;
+  z-index: 10;
+}
+
+.radarBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  background-color: rgba(13, 14, 15, 0.85);
+  border: 1px solid var(--border-color);
+  color: var(--on-surface-variant);
+  border-radius: var(--rounded-element);
+  transition: all 0.2s ease;
+}
+
+.radarBtn:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+  background-color: var(--surface-container-high);
+}
+
+/* 7-Day Outlook Widget Styles */
+.outlookList {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex-grow: 1;
+  overflow-y: auto;
+}
+
+.outlookRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.outlookRow:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.outlookDay {
+  width: 60px;
+  color: var(--on-surface);
+}
+
+.outlookIcon {
+  color: var(--primary);
+  display: flex;
+  align-items: center;
+  transition: transform 0.2s ease;
+}
+
+.outlookRow:hover .outlookIcon {
+  transform: scale(1.1);
+}
+
+.outlookTempRange {
+  display: flex;
+  gap: 16px;
+  width: 80px;
+  justify-content: flex-end;
+}
+
+.outlookTempMax {
+  color: var(--on-surface);
+  font-size: 1.5rem;
+}
+
+.outlookTempMin {
+  color: var(--on-surface-variant);
+  font-size: 1.5rem;
+}
+
+/* Helper styles for metadata labels */
+:global(.var-label) {
+  color: var(--on-surface-variant);
+  font-size: 1.1rem;
+}
+
+/* Animations */
+@keyframes pulseRadar {
+  0% {
+    transform: scale(0.6);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(2.2);
+    opacity: 0;
+  }
+}
+
+/* Desktop grid rules override */
+@media (min-width: 768px) {
+  .heroCard {
+    grid-column: span 8;
+  }
+
+  .metricsCard {
+    grid-column: span 4;
+  }
+
+  .radarCard {
+    grid-column: span 6;
+  }
+
+  .outlookCard {
+    grid-column: span 6;
+  }
+}

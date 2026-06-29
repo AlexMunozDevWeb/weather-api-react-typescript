@@ -1,0 +1,119 @@
+/* Theme definitions */
+:root, .theme-crimson {
+  --bg-primary: #0d0e0f;
+  --bg-app: #121414;
+  --surface: #171717;
+  --surface-container: #1e2020;
+  --surface-container-low: #1a1c1c;
+  --surface-container-high: #292a2a;
+  --surface-container-highest: #343535;
+  --border-color: #262626;
+  --primary: #e11d48; /* Crimson Brand */
+  --primary-glow: rgba(225, 29, 72, 0.2);
+  --primary-glow-active: rgba(225, 29, 72, 0.4);
+  --on-surface: #e3e2e2;
+  --on-surface-variant: #c4c7c7;
+  --outline: #8e9192;
+  --outline-variant: #444748;
+  --rounded-card: 0px;
+  --rounded-element: 0px;
+}
+
+.theme-elite {
+  --bg-primary: #0b0d1e;
+  --bg-app: #101223;
+  --surface: #181a2c;
+  --surface-container: #1c1e30;
+  --surface-container-low: #181a2c;
+  --surface-container-high: #27293b;
+  --surface-container-highest: #323347;
+  --border-color: #2e303f;
+  --primary: #00a3ff; /* Sky Blue */
+  --primary-glow: rgba(0, 163, 255, 0.2);
+  --primary-glow-active: rgba(0, 163, 255, 0.4);
+  --on-surface: #e0e0fa;
+  --on-surface-variant: #bec7d4;
+  --outline: #88919d;
+  --outline-variant: #3f4852;
+  --rounded-card: 24px; /* Super-ellipse */
+  --rounded-element: 12px;
+}
+
+/* Reset and Globals */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 62.5%; /* 1rem = 10px */
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: "Geist", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+  background-color: var(--bg-app);
+  color: var(--on-surface);
+  font-size: 1.6rem;
+  min-height: 100vh;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  overflow-x: hidden;
+}
+
+/* Typography Utilities */
+.font-headline {
+  font-family: "Hanken Grotesk", sans-serif;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.font-display {
+  font-family: "Hanken Grotesk", sans-serif;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.font-label-caps {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 1.2rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.font-code {
+  font-family: "JetBrains Mono", monospace;
+}
+
+/* Custom Scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-primary);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--surface-container-high);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--primary);
+}
+
+/* Basic Input Styles */
+input, select, button {
+  font-family: inherit;
+  font-size: inherit;
+  color: inherit;
+}
+
+button {
+  cursor: pointer;
+  border: none;
+  background: none;
+}
