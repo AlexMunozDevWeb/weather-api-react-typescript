@@ -9,17 +9,17 @@ import Spinner from "./components/Spinner/Spinner";
 import Alert from "./components/Alert/Alert";
 
 function App() {
-  const { 
-    weather, 
+  const {
+    weather,
     loading,
-    notFound, 
-    error, 
+    notFound,
+    error,
     isSearchOpen,
     theme,
     toggleTheme,
     setSearchOpen,
-    fetchWeather, 
-    fetchWeatherByLocation
+    fetchWeather,
+    fetchWeatherByLocation,
   } = useWeatherStore();
 
   // Sync theme class with document body
@@ -36,19 +36,17 @@ function App() {
   return (
     <>
       {/* Top Navigation Bar */}
-      <Header 
-        onSearchClick={() => setSearchOpen(true)} 
+      <Header
+        onSearchClick={() => setSearchOpen(true)}
         activeTheme={theme}
         onToggleTheme={toggleTheme}
       />
-
       {/* Floating Search Modal Overlay */}
-      <Form 
-        isOpen={isSearchOpen} 
-        onClose={() => setSearchOpen(false)} 
-        fetchWeather={fetchWeather} 
+      <Form
+        isOpen={isSearchOpen}
+        onClose={() => setSearchOpen(false)}
+        fetchWeather={fetchWeather}
       />
-
       {/* Main Dashboard Space */}
       <main className={styles.main}>
         {loading && <Spinner />}
@@ -56,8 +54,8 @@ function App() {
         {!loading && (notFound || error) && (
           <div className={styles.centerMsg}>
             <Alert>{error || "Ciudad No Encontrada. Intente de nuevo."}</Alert>
-            <button 
-              className={styles.retryBtn} 
+            <button
+              className={styles.retryBtn}
               onClick={() => setSearchOpen(true)}
             >
               Buscar de nuevo
@@ -65,34 +63,36 @@ function App() {
           </div>
         )}
 
-        {!loading && weather !== null && (
-          <Dashboard weather={weather} />
-        )}
+        {!loading && weather !== null && <Dashboard weather={weather} />}
       </main>
-
       {/* Mobile Bottom Navigation Bar */}
       <nav className={styles.bottomNav}>
         <a href="#forecast" className={styles.bottomNavBtn}>
           <Compass size={20} />
-          <span className="font-label-caps" style={{ fontSize: "0.9rem" }}>Forecast</span>
+          <span className="font-label-caps" style={{ fontSize: "0.9rem" }}>
+            Forecast
+          </span>
         </a>
         <a href="#radar" className={styles.bottomNavBtn}>
           <Flame size={20} />
-          <span className="font-label-caps" style={{ fontSize: "0.9rem" }}>Radar</span>
+          <span className="font-label-caps" style={{ fontSize: "0.9rem" }}>
+            Radar
+          </span>
         </a>
-        <button 
-          onClick={() => setSearchOpen(true)} 
+        <button
+          onClick={() => setSearchOpen(true)}
           className={styles.bottomNavBtn}
         >
           <Search size={20} />
-          <span className="font-label-caps" style={{ fontSize: "0.9rem" }}>Search</span>
+          <span className="font-label-caps" style={{ fontSize: "0.9rem" }}>
+            Search
+          </span>
         </button>
       </nav>
-
       {/* Floating Location Action Button */}
       <div className={styles.fabContainer}>
-        <button 
-          className={styles.fab} 
+        <button
+          className={styles.fab}
           onClick={fetchWeatherByLocation}
           title="Usar mi ubicación actual"
           aria-label="Usar mi ubicación actual"

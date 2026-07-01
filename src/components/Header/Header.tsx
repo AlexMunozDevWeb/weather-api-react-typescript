@@ -7,14 +7,18 @@ type HeaderProps = {
   onToggleTheme: () => void;
 };
 
-export const Header = ({ onSearchClick, activeTheme, onToggleTheme }: HeaderProps) => {
+export const Header = ({
+  onSearchClick,
+  activeTheme,
+  onToggleTheme,
+}: HeaderProps) => {
   return (
     <header className={styles.header}>
       <div className={styles.container}>
         {/* Left Side: Search Trigger and Brand Logo */}
         <div className={styles.left}>
-          <button 
-            className={styles.iconButton} 
+          <button
+            className={styles.iconButton}
             onClick={onSearchClick}
             aria-label="Buscar ciudad"
             title="Buscar ciudad"
@@ -26,14 +30,14 @@ export const Header = ({ onSearchClick, activeTheme, onToggleTheme }: HeaderProp
 
         {/* Center: Navigation Links */}
         <nav className={styles.nav}>
-          <a className={`${styles.navLink} ${styles.activeLink}`} href="#forecast">
+          <a
+            className={`${styles.navLink} ${styles.activeLink}`}
+            href="#forecast"
+          >
             FORECAST
           </a>
           <a className={styles.navLink} href="#radar">
             RADAR
-          </a>
-          <a className={styles.navLink} href="#metrics">
-            METRICS
           </a>
         </nav>
 
@@ -57,11 +61,19 @@ export const Header = ({ onSearchClick, activeTheme, onToggleTheme }: HeaderProp
               </>
             )}
           </button>
-          
-          <button className={styles.iconButton} aria-label="Notificaciones" title="Notificaciones (Simulado)">
+
+          <button
+            className={styles.iconButton}
+            aria-label="Notificaciones"
+            title="Notificaciones (Simulado)"
+          >
             <Bell size={20} />
           </button>
-          <button className={styles.iconButton} aria-label="Configuración" title="Configuración (Simulado)">
+          <button
+            className={styles.iconButton}
+            aria-label="Configuración"
+            title="Configuración (Simulado)"
+          >
             <Settings size={20} />
           </button>
         </div>
