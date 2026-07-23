@@ -18,6 +18,9 @@ https://weather-react-tscript.netlify.app/
 - Cambio de tema entre dos modos visuales: Crimson y Elite.
 - Estados de carga, error y sin resultados con mensajes amigables.
 - Diseño responsivo con estilos en CSS Modules y Tailwind para componentes auxiliares.
+- Accesibilidad WCAG 2.1: focus trap en modales, skip-navigation, aria-live, roles ARIA.
+- Error Boundary para capturar errores de render sin pantalla blanca.
+- Cancelación de requests duplicados con AbortController.
 
 ## Tecnologías utilizadas
 
@@ -57,7 +60,7 @@ https://weather-react-tscript.netlify.app/
    VITE_API_KEY_WEATHER_APP=tu_clave_api_aqui
    ```
 
-   También puedes usar la variable `API_KEY_WEATHER_APP`, aunque la aplicación prioriza `VITE_API_KEY_WEATHER_APP`.
+   > **Nota:** El prefijo `VITE_` es obligatorio. Sin él, la variable no estará disponible en el código del cliente.
 
 4. Inicia el servidor de desarrollo:
 
@@ -77,7 +80,7 @@ https://weather-react-tscript.netlify.app/
 
 ## Estructura del proyecto
 
-- `src/components` Contiene los componentes de UI como el formulario, dashboard, header, alertas y spinner.
+- `src/components` Contiene los componentes de UI como el formulario, dashboard, header, alertas, spinner y ErrorBoundary.
 - `src/store` Gestiona el estado global con Zustand y las peticiones a la API.
 - `src/types` Define los tipos TypeScript usados por la app.
 - `src/utils` Incluye utilidades para formateo de temperatura, tiempo y etiquetas de calidad del aire.
