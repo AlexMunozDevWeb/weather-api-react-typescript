@@ -2,6 +2,8 @@
 
 Aplicación web de clima construida con React, TypeScript y Vite que muestra información meteorológica en tiempo real utilizando la API de OpenWeatherMap. La interfaz presenta un diseño tipo dashboard con tarjetas visuales, animaciones y métricas de clima en un estilo moderno y responsivo.
 
+https://weather-react-tscript.netlify.app/
+
 <img width="1292" height="807" alt="image" src="https://github.com/user-attachments/assets/4868f781-fa3c-434f-86bb-5bedfe14c4ee" />
 
 ## Características principales
