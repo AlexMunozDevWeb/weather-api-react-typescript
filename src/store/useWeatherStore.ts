@@ -4,7 +4,7 @@ import { z } from "zod";
 import type { SearchType, ProcessedWeather } from "../types";
 import { formatTemperature, formatTime, getDayName, getAqiLabel } from "../utils";
 
-// Zod validation schemas
+// Zod validation schemas — TS types inferred from these
 const WeatherSchema = z.object({
   name: z.string(),
   dt: z.number(),
@@ -67,6 +67,19 @@ const AirPollutionSchema = z.object({
   ),
 });
 
+type ForecastRaw = z.infer<typeof ForecastSchema>;
+
+// API key resolution — fail clearly if missing
+const getAppId = (): string => {
+  const id = import.meta.env.VITE_API_KEY_WEATHER_APP;
+  if (!id) {
+    throw new Error(
+      "Falta la variable de entorno VITE_API_KEY_WEATHER_APP. Crea un archivo .env con tu API key de OpenWeatherMap."
+    );
+  }
+  return id;
+};
+
 interface WeatherStore {
   weather: ProcessedWeather | null;
   loading: boolean;
@@ -74,29 +87,34 @@ interface WeatherStore {
   error: string | null;
   isSearchOpen: boolean;
   theme: "crimson" | "elite";
-  
-  // Setters
+
   setTheme: (theme: "crimson" | "elite") => void;
   toggleTheme: () => void;
   setSearchOpen: (isOpen: boolean) => void;
-  
-  // Data actions
+
   fetchWeather: (search: SearchType) => Promise<void>;
   fetchWeatherByLocation: () => void;
 }
 
-// Helpers for weather fetching details inside store
-const fetchWeatherDetails = async (lat: number, lon: number, cityName: string, countryCode: string): Promise<ProcessedWeather> => {
-  const appId = import.meta.env.VITE_API_KEY_WEATHER_APP || import.meta.env.API_KEY_WEATHER_APP || "9099babca5485a52497da9ecd3faae6a";
-  
-  const weatherUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${appId}`;
-  const forecastUrl = `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${appId}`;
-  const pollutionUrl = `https://api.openweathermap.org/data/2.5/air_pollution?lat=${lat}&lon=${lon}&appid=${appId}`;
+// Active AbortController for cancelling in-flight requests
+let activeController: AbortController | null = null;
+
+const fetchWeatherDetails = async (
+  lat: number,
+  lon: number,
+  cityName: string,
+  countryCode: string,
+  signal?: AbortSignal
+): Promise<ProcessedWeather> => {
+  const appId = getAppId();
+
+  const base = "https://api.openweathermap.org/data/2.5";
+  const params = `lat=${lat}&lon=${lon}&appid=${appId}`;
 
   const [weatherRes, forecastRes, pollutionRes] = await Promise.all([
-    axios.get(weatherUrl),
-    axios.get(forecastUrl),
-    axios.get(pollutionUrl),
+    axios.get(`${base}/weather?${params}`, { signal }),
+    axios.get(`${base}/forecast?${params}`, { signal }),
+    axios.get(`${base}/air_pollution?${params}`, { signal }),
   ]);
 
   const weatherParsed = WeatherSchema.safeParse(weatherRes.data);
@@ -104,11 +122,6 @@ const fetchWeatherDetails = async (lat: number, lon: number, cityName: string, c
   const pollutionParsed = AirPollutionSchema.safeParse(pollutionRes.data);
 
   if (!weatherParsed.success || !forecastParsed.success || !pollutionParsed.success) {
-    console.error("Zod Parsing Error:", {
-      weather: weatherParsed.success ? null : weatherParsed.error,
-      forecast: forecastParsed.success ? null : forecastParsed.error,
-      pollution: pollutionParsed.success ? null : pollutionParsed.error,
-    });
     throw new Error("La respuesta del servidor no tiene un formato válido.");
   }
 
@@ -125,7 +138,7 @@ const fetchWeatherDetails = async (lat: number, lon: number, cityName: string, c
   }));
 
   // Process daily forecast (grouping by date)
-  const dailyMap: { [dateStr: string]: typeof fData.list } = {};
+  const dailyMap: { [dateStr: string]: ForecastRaw["list"] } = {};
   fData.list.forEach((item) => {
     const dateStr = item.dt_txt.split(" ")[0];
     if (!dailyMap[dateStr]) {
@@ -134,7 +147,10 @@ const fetchWeatherDetails = async (lat: number, lon: number, cityName: string, c
     dailyMap[dateStr].push(item);
   });
 
-  const todayStr = new Date().toISOString().split("T")[0];
+  // Use local date of the queried city (offset by timezone from API dt)
+  const nowUtcMs = Date.now();
+  const todayStr = new Date(nowUtcMs).toLocaleDateString("sv-SE"); // "YYYY-MM-DD" in local TZ
+
   const daily = Object.entries(dailyMap)
     .filter(([dateStr]) => dateStr !== todayStr)
     .slice(0, 5)
@@ -143,7 +159,7 @@ const fetchWeatherDetails = async (lat: number, lon: number, cityName: string, c
       const temp_min = Math.min(...temps);
       const temp_max = Math.max(...temps);
       const midItem = items[Math.floor(items.length / 2)] || items[0];
-      
+
       return {
         dayName: getDayName(midItem.dt),
         temp_min: formatTemperature(temp_min),
@@ -163,7 +179,7 @@ const fetchWeatherDetails = async (lat: number, lon: number, cityName: string, c
     feels_like: formatTemperature(wData.main.feels_like),
     description: wData.weather[0]?.description || "despejado",
     humidity: wData.main.humidity,
-    windSpeed: Math.round(wData.wind.speed * 3.6), // m/s to km/h
+    windSpeed: Math.round(wData.wind.speed * 3.6),
     clouds: wData.clouds.all,
     pressure: wData.main.pressure,
     airQuality: {
@@ -181,7 +197,7 @@ export const useWeatherStore = create<WeatherStore>((set, get) => ({
   notFound: false,
   error: null,
   isSearchOpen: false,
-  theme: (localStorage.getItem("skycast-theme") === "elite" ? "elite" : "crimson"),
+  theme: localStorage.getItem("skycast-theme") === "elite" ? "elite" : "crimson",
 
   setTheme: (theme) => {
     set({ theme });
@@ -197,16 +213,23 @@ export const useWeatherStore = create<WeatherStore>((set, get) => ({
   setSearchOpen: (isSearchOpen) => set({ isSearchOpen }),
 
   fetchWeather: async (search) => {
-    const appId = import.meta.env.VITE_API_KEY_WEATHER_APP || import.meta.env.API_KEY_WEATHER_APP || "9099babca5485a52497da9ecd3faae6a";
+    // Cancel any in-flight request
+    if (activeController) {
+      activeController.abort();
+    }
+    const controller = new AbortController();
+    activeController = controller;
+
     set({ loading: true, notFound: false, error: null });
 
     try {
+      const appId = getAppId();
       const query = search.country
         ? `${encodeURIComponent(search.city)},${encodeURIComponent(search.country)}`
         : encodeURIComponent(search.city);
-        
+
       const geoUrl = `https://api.openweathermap.org/geo/1.0/direct?q=${query}&limit=1&appid=${appId}`;
-      const { data } = await axios.get(geoUrl);
+      const { data } = await axios.get(geoUrl, { signal: controller.signal });
 
       if (!data || data.length === 0) {
         set({ notFound: true, weather: null, loading: false });
@@ -214,16 +237,17 @@ export const useWeatherStore = create<WeatherStore>((set, get) => ({
       }
 
       const { lat, lon, name, country } = data[0];
-      const processed = await fetchWeatherDetails(lat, lon, name, country);
+      const processed = await fetchWeatherDetails(lat, lon, name, country, controller.signal);
       set({ weather: processed, error: null, loading: false });
     } catch (err) {
-      console.error("Geocoding or fetch error:", err);
+      if (axios.isCancel(err)) return;
       const errMsg = err instanceof Error ? err.message : "No se pudo obtener el clima.";
-      set({ 
-        notFound: true, 
-        weather: null, 
-        error: errMsg, 
-        loading: false 
+      const isNotFound = !errMsg.includes("formato válido") && !errMsg.includes("network");
+      set({
+        notFound: isNotFound,
+        weather: null,
+        error: errMsg,
+        loading: false,
       });
     }
   },
@@ -234,22 +258,27 @@ export const useWeatherStore = create<WeatherStore>((set, get) => ({
       return;
     }
 
-    set({ loading: true, notFound: false, error: null });
+    // Cancel any in-flight request
+    if (activeController) {
+      activeController.abort();
+    }
+    const controller = new AbortController();
+    activeController = controller;
 
     navigator.geolocation.getCurrentPosition(
       async (position) => {
+        set({ loading: true, notFound: false, error: null });
         const { latitude, longitude } = position.coords;
         try {
-          const processed = await fetchWeatherDetails(latitude, longitude, "", "");
+          const processed = await fetchWeatherDetails(latitude, longitude, "", "", controller.signal);
           set({ weather: processed, error: null, loading: false });
         } catch (err) {
-          console.error("Fetch weather by location error:", err);
+          if (axios.isCancel(err)) return;
           set({ error: "No se pudo obtener el clima para tu ubicación.", loading: false });
         }
       },
-      (err) => {
-        console.error("Geolocation error:", err);
-        set({ error: "Permiso de ubicación denegado o no disponible.", loading: false });
+      () => {
+        set({ error: "Permiso de ubicación denegado o no disponible." });
       }
     );
   },

@@ -109,6 +109,31 @@
   color: var(--primary);
 }
 
+.bottomNavLabel {
+  font-size: 0.9rem;
+}
+
+/* Skip Navigation (accessibility) */
+.skipNav {
+  position: absolute;
+  top: -100%;
+  left: 16px;
+  z-index: 9999;
+  padding: 12px 24px;
+  background-color: var(--primary);
+  color: #fff;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 1.4rem;
+  font-weight: 600;
+  text-decoration: none;
+  border-radius: var(--rounded-element);
+  transition: top 0.2s ease;
+}
+
+.skipNav:focus {
+  top: 16px;
+}
+
 /* Responsive Rules Override */
 @media (min-width: 768px) {
   .main {

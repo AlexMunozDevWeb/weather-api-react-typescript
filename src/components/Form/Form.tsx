@@ -1,4 +1,4 @@
-import { ChangeEvent, FormEvent, useState, useEffect } from "react";
+import { ChangeEvent, FormEvent, useState, useEffect, useRef, useCallback } from "react";
 import { X, Search } from "lucide-react";
 import type { SearchType } from "../../types";
 import { countries } from "../../data/countries";
@@ -18,13 +18,57 @@ export default function Form({ isOpen, onClose, fetchWeather }: FormProps) {
   });
 
   const [alert, setAlert] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Clean form state on open/close
+  const modalRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const previousFocusRef = useRef<HTMLElement | null>(null);
+
+  // Focus trap and Escape key
+  const handleKeyDown = useCallback(
+    (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        onClose();
+        return;
+      }
+
+      if (e.key === "Tab" && modalRef.current) {
+        const focusable = modalRef.current.querySelectorAll<HTMLElement>(
+          'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+        );
+        if (focusable.length === 0) return;
+
+        const first = focusable[0];
+        const last = focusable[focusable.length - 1];
+
+        if (e.shiftKey && document.activeElement === first) {
+          e.preventDefault();
+          last.focus();
+        } else if (!e.shiftKey && document.activeElement === last) {
+          e.preventDefault();
+          first.focus();
+        }
+      }
+    },
+    [onClose]
+  );
+
   useEffect(() => {
     if (isOpen) {
+      previousFocusRef.current = document.activeElement as HTMLElement;
       setAlert("");
+      // Focus the input after the modal animation
+      requestAnimationFrame(() => inputRef.current?.focus());
+      document.addEventListener("keydown", handleKeyDown);
+      document.body.style.overflow = "hidden";
     }
-  }, [isOpen]);
+
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+      document.body.style.overflow = "";
+      previousFocusRef.current?.focus();
+    };
+  }, [isOpen, handleKeyDown]);
 
   if (!isOpen) return null;
 
@@ -44,13 +88,24 @@ export default function Form({ isOpen, onClose, fetchWeather }: FormProps) {
       return;
     }
     setAlert("");
-    await fetchWeather(search);
-    onClose(); // Auto close on successful trigger
+    setIsSubmitting(true);
+    try {
+      await fetchWeather(search);
+      onClose();
+    } catch {
+      setAlert("No se pudo obtener el clima. Intente de nuevo.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
-    <div className={styles.overlay} onClick={onClose}>
-      <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
+    <div className={styles.overlay} onClick={onClose} role="dialog" aria-modal="true" aria-label="Buscar ciudad">
+      <div
+        className={styles.modal}
+        ref={modalRef}
+        onClick={(e) => e.stopPropagation()}
+      >
         {/* Header */}
         <div className={styles.modalHeader}>
           <h2 className={`${styles.modalTitle} font-headline`}>BUSCAR CLIMA</h2>
@@ -60,19 +115,22 @@ export default function Form({ isOpen, onClose, fetchWeather }: FormProps) {
         </div>
 
         {/* Form Body */}
-        <form className={styles.form} onSubmit={handleSubmit}>
+        <form className={styles.form} onSubmit={handleSubmit} noValidate>
           {alert && <Alert>{alert}</Alert>}
-          
+
           <div className={styles.field}>
             <label htmlFor="city" className="font-label-caps">Ciudad</label>
             <input
+              ref={inputRef}
               id="city"
               type="text"
               name="city"
               placeholder="Ej: Madrid, Tokio, Nueva York"
               value={search.city}
               onChange={handleChange}
-              autoFocus
+              required
+              maxLength={100}
+              autoComplete="off"
             />
           </div>
 
@@ -84,6 +142,7 @@ export default function Form({ isOpen, onClose, fetchWeather }: FormProps) {
                 name="country"
                 value={search.country}
                 onChange={handleChange}
+                required
               >
                 <option value=""> -- Seleccione un país -- </option>
                 {countries.map((country) => (
@@ -95,9 +154,9 @@ export default function Form({ isOpen, onClose, fetchWeather }: FormProps) {
             </div>
           </div>
 
-          <button className={styles.submit} type="submit">
+          <button className={styles.submit} type="submit" disabled={isSubmitting}>
             <Search size={16} />
-            <span>CONSULTAR CLIMA</span>
+            <span>{isSubmitting ? "BUSCANDO..." : "CONSULTAR CLIMA"}</span>
           </button>
         </form>
       </div>
